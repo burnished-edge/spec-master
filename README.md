@@ -9,8 +9,7 @@ This guide provides technical instructions for configuring source documents, adj
   * [End-User Workflow](#end-user-workflow)
   * [Adjusting Text Formatting in Code](#adjusting-text-formatting-in-code)
   * [PDF Export](#pdf-export)
-  * [Tips and Tricks](#tips-and-tricks)
-  * [Layout Estimations](#layout-estimations)
+
 
 ---
 
@@ -94,21 +93,5 @@ HTML web browsers and PDF generators utilize entirely different rendering engine
 
 ---
 
-### Tips and Tricks
-
-Observe the following operational guidelines to maximize the efficiency of the modular system:
-
-* **Project Toggling:** Use the web dashboard checkboxes to easily add or remove ("turn on/off") individual specification sections for your specific project.
-* **Automated Table of Contents:** The Table of Contents automatically generates and updates dynamically to reflect the active sections you have toggled on.
-* **Network Storage:** Store the database of individual spec section files on a shared network project folder to ensure the entire team is pulling from the most current versions.
-
----
-
-### Layout Estimations
-If you need to calculate the exact physical boundaries the layout will take up, use the following formulas:
-* **Total Width:** $W_{total} = (W_{col} \times N_{cols}) + (S_{gap} \times (N_{cols} - 1))$
-* **Total Height:** $H_{total} = N_{lines} \times H_{line}$
-
-![Placeholder: Screenshot of Web Dashboard UI showing Section Toggles, Dynamic TOC, and Layout Previews]
 
 
