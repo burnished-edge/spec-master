@@ -1,4 +1,4 @@
-# HTML Spec Section Manager
+# Spec Master
 
 This guide provides technical instructions for configuring source documents, adjusting code-level text formatting, navigating the HTML Spec Section Manager web dashboard, and executing the end-user workflow.
 
