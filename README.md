@@ -23,7 +23,7 @@ To utilize the database-driven spec system, individual specification files must 
 * **Critical Notes (Red Text):** Any critical notes still requiring user review or modification at the time of export should be formatted in red text within the source Word document. 
 * **Red Text Flagging:** The HTML tool preserves this red text in its PDF export.
 
-![Word doc file showing CSI formatting and red critical notes](docs/images/spaces.png)
+![Word doc file showing CSI formatting and red critical notes](docs/images/sections.png)
 
 ---
 
@@ -37,11 +37,37 @@ To utilize the database-driven spec system, individual specification files must 
 
 3. **Setting a project specs folder:** Once the web page loads, you will see the interface shown below. You will need to set two folder paths, one containing all the individual spec section files
 
-4. **Selecting Spec Sections:** Once the web page loads, you will see a clean interface displaying the available spec sections. Simply check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections.
+![User Interface](docs/images/interface.png)
 
-5. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
-6. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
-7. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
+4. **Selecting Spec Sections:** Two options for selecting specs:
+
+* Check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections. Hold Shift to check/uncheck multiple sections.
+* Simply remove the corresponding Word doc files from your project specs folder copied from Step 1.
+
+5. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation by clicking "1. Compile Specs for Revit". The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is formatted for a Revit sheet.
+
+![Buttons](docs/images/buttons.png)
+
+6.**Previewing the Layout:** A green 'success' message should appear at the bottom of the window. Click "2. Preview Formatting" to open a new tab with a simulation of what the sheet will look like. `Note that this is not representative of the exact output. Due to the inherent differences between CSS/HTML and PDF, this preview will only ever be an approximation`
+
+7.**Adjusting Layout:** In the Preview tab, you'll be able to adjust layout controls including:
+
+ * PDF sheet width and height
+ * Sheet Margins
+ * Column gap (gap between columns)
+ * Line spacing
+ * Font size
+ * Font (choose between Arial Narrow and Arial)
+
+![Preview](docs/images/preview.png)
+
+8. **Export PDF:** Click the green Export to PDF button to bring up your browser's native print dialog for exporting to PDF. Highly recommend selecting "Save as PDF" from the printer list to preserve sheet size on export. Your browser's print preview should show the final layout.
+
+![Export](docs/images/export.png)
+
+9. **Closing the Tool:** When you are finished managing the specs, close the preview tab. Go back to the manager tab and click "3. Close Tool & Shutdown". This will shut down the Python server listening for commands from the html website.
+
+10. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
 
 ---
 
