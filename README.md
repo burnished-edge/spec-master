@@ -23,13 +23,15 @@ To utilize the database-driven spec system, individual specification files must 
 * **Critical Notes (Red Text):** Any critical notes still requiring user review or modification at the time of export should be formatted in red text within the source Word document. 
 * **Red Text Flagging:** The HTML tool preserves this red text in its PDF export.
 
-![Placeholder: Screenshot of Word doc file showing CSI formatting and red critical notes]
+![Word doc file showing CSI formatting and red critical notes](docs/images/spaces.png)
 
 ---
 
 ### End-User Workflow
 
 1. **Copying spec files** Copy the folder of Individual Specs from the server to your project folder. If making or copying your own spec files, see previous section for requirements.
+
+![Folder of individual Word doc specs files](docs/images/docx.png)
 
 2. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (which points to the `manager.pyw` file). The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to the `index.html` file stored in the same folder as `manager.pyw`).
 
