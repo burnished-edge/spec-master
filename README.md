@@ -1,51 +1,56 @@
-# Spec Master
+# HTML Spec Section Manager
 
-This guide provides technical instructions for configuring source documents, adjusting code-level text formatting, and navigating the HTML Spec Section Manager.
+This guide provides technical instructions for configuring source documents, adjusting code-level text formatting, navigating the HTML Spec Section Manager web dashboard, and executing the end-user workflow.
 
 ## Document Setup and Formatting
 
 To utilize the database-driven spec system, individual specification files must be configured correctly before compiling the layout.
 
-* Save each individual spec section as a separate Word doc file.
-* Ensure all source text strictly follows the required CSI Masterspec formatting. 
-* If the spec sections contain critical notes that require user editing, format this text in red. 
-* The system will flag this red text to ensure it is addressed by the user before final compilation.
+* **File Modularity:** Each 3-part specification section must be saved as an individual Word document.
+* **CSI Formatting:** All text within these Word documents must adhere strictly to CSI Masterspec formatting conventions.
+* **Critical Notes (Red Text):** Any critical notes requiring user review or modification must be formatted in red text within the source Word document. 
+* **Red Text Flagging:** The HTML tool preserves this red text in its PDF export.
 
-> `[Placeholder: Screenshot of Word doc file showing CSI formatting and red critical notes]`
-
----
+![Placeholder: Screenshot of Word doc file showing CSI formatting and red critical notes]
 
 ## Adjusting Text Formatting in Code
 
-Visual formatting preferences are controlled via the tool's underlying code. To adjust text formatting as desired, you must edit the code directly.
+Visual formatting preferences are controlled via the tool's underlying code. To adjust text formatting, you must edit the code directly.
 
 1. **Locate the CSS File:** Open the CSS stylesheet associated with the web dashboard's frontend interface.
-2. **Target the Classes:** Locate the corresponding CSS classes mapped to the spec section hierarchy.
-3. **Modify Properties:** Edit standard CSS properties (e.g., `font-weight`, `margin-left`, `text-decoration`) to reflect your desired visual output.
-4. **Save and Refresh:** Save the file and refresh the browser dashboard to review the updated formatting.
+2. **Target the Classes:** Locate the specific CSS classes mapped to the CSI hierarchy (e.g., `section-header`, `part-title`, `list-level-1`).
+3. **Modify Properties:** Edit standard CSS properties (e.g., `font-weight`, `margin-left`, `text-decoration`) to reflect your desired visual output. 
+4. **Save and Refresh:** Save the file and hard-refresh the browser dashboard to review the updated formatting.
 
-> `[Placeholder: Screenshot of CSS Code Snippet Highlighting Formatting Classes]`
-
----
+![Placeholder: Screenshot of CSS Code Snippet Highlighting Formatting Classes]
 
 ## PDF Export Rendering Discrepancies
 
-**Disclaimer:** The preview may not reflect the final PDF export. 
+> **Disclaimer:** The visual preview rendered in the HTML/CSS web dashboard may not perfectly match the final output of the exported PDF.
 
-This discrepancy occurs due to the fundamental differences between HTML/CSS and PDF rendering engines. Because web browsers and PDF generators calculate elements like font spacing, margins, and word-wrapping differently, always review the exported PDF to verify precise layout alignment.
+HTML web browsers and PDF generators utilize entirely different rendering engines. These differences affect how the engines calculate font spacing, margins, and word-wrapping. Always review the final PDF export to verify precise line breaks and layout alignments.
 
-> `[Placeholder: Screenshot of side-by-side comparison showing HTML preview vs. PDF export]`
-
----
+![Placeholder: Screenshot of side-by-side comparison showing HTML preview vs. PDF export]
 
 ## Navigation Tips and Tricks
 
-To maximize the efficiency of the modular system, observe the following operational guidelines:
+Observe the following operational guidelines to maximize the efficiency of the modular system:
 
-* **Project Toggling:** The tool provides the ability to add or remove spec sections on a per-project basis. Use the interface checkboxes to easily "turn on/off" sections.
-* **Dynamic Table of Contents:** The Table of Contents is designed to update automatically as sections are added or removed.
-* **Network Storage:** Store the specs database on a shared project folder on your server to ensure the entire team is pulling from the most current file versions.
-* **Layout Estimation (Width):** Calculate the exact overall width the layout will take up using the formula: W_total = (W_col * N_cols) + (S_gap * (N_cols - 1)).
-* **Layout Estimation (Height):** Calculate the exact overall height using the formula: H_total = N_lines * H_line.
+* **Project Toggling:** Use the web dashboard checkboxes to easily add or remove ("turn on/off") individual specification sections for your specific project.
+* **Automated Table of Contents:** The Table of Contents automatically generates and updates dynamically to reflect the active sections you have toggled on.
+* **Network Storage:** Store the database of individual spec section files on a shared network project folder to ensure the entire team is pulling from the most current versions.
 
-> `[Placeholder: Screenshot of Web Dashboard UI showing Section Toggles, Dynamic TOC, and Layout Previews]`
+### Layout Estimations
+If you need to calculate the exact physical boundaries the layout will take up, use the following formulas:
+* **Total Width:** $W_{total} = (W_{col} \times N_{cols}) + (S_{gap} \times (N_{cols} - 1))$
+* **Total Height:** $H_{total} = N_{lines} \times H_{line}$
+
+![Placeholder: Screenshot of Web Dashboard UI showing Section Toggles, Dynamic TOC, and Layout Previews]
+
+## End-User Workflow
+
+1. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (or `.pyw` file) located on your desktop or in the shared project folder. You do not need to manually type in an IP address. The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to `http://localhost:8000`).
+2. **Selecting Spec Sections:** Once the web page loads, you will see a clean interface displaying the available spec sections. Simply check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections.
+3. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
+4. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
+5. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
