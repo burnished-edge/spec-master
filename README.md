@@ -29,11 +29,17 @@ To utilize the database-driven spec system, individual specification files must 
 
 ### End-User Workflow
 
-1. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (or `.pyw` file) located on your desktop or in the shared project folder. You do not need to manually type in an IP address. The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to `http://localhost:8000`).
-2. **Selecting Spec Sections:** Once the web page loads, you will see a clean interface displaying the available spec sections. Simply check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections.
-3. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
-4. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
-5. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
+1. **Copying spec files** Copy the folder of Individual Specs from the server to your project folder. If making or copying your own spec files, see previous section for requirements.
+
+2. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (which points to the `manager.pyw` file). The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to the `index.html` file stored in the same folder as `manager.pyw`).
+
+3. **Setting a project specs folder:** Once the web page loads, you will see the interface shown below. You will need to set two folder paths, one containing all the individual spec section files
+
+4. **Selecting Spec Sections:** Once the web page loads, you will see a clean interface displaying the available spec sections. Simply check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections.
+
+5. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
+6. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
+7. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
 
 ---
 
