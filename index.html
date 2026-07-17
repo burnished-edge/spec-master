@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spec Sections Manager</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { font-size: 24px; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
+        .section { margin-bottom: 25px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .button { background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; }
+        .button:hover { background-color: #2980b9; }
+        .spec-list { border: 1px solid #eee; padding: 15px; border-radius: 4px; max-height: 350px; overflow-y: auto; background: #fafafa; }
+        .spec-item { margin-bottom: 10px; display: flex; align-items: center; }
+        .spec-item input { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; }
+        #status-msg { margin-top: 15px; font-weight: bold; font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spec Sections Manager</h1>
+        
+        <div class="section" style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;">
+            <h3>Directory Settings</h3>
+            
+            <label>Master Library Path (contains .docx files):</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="master-path" placeholder="e.g., Z:\BIM\Standards\Specs_Master">
+                <button class="button" onclick="browseDirectory('master-path')" style="background-color: #95a5a6; font-size: 14px; padding: 10px;">Browse...</button>
+            </div>
+
+            <label>Project Output Path (saves compiled JSON):</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="output-path" placeholder="e.g., Z:\Projects\2026\Project_Name\Specs">
+                <button class="button" onclick="browseDirectory('output-path')" style="background-color: #95a5a6; font-size: 14px; padding: 10px;">Browse...</button>
+            </div>
+
+            <button class="button" onclick="saveConfig()" style="background-color: #7f8c8d; font-size: 14px;">Save Directories</button>
+        </div>
+
+        <div class="section">
+            <h3>Select Specifications</h3>
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px;">
+                <button class="button" onclick="loadSpecs()" style="background-color: #7f8c8d; font-size: 14px;">Refresh Available Specs</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="button" onclick="toggleAll(true)" style="background-color: #95a5a6; font-size: 12px; padding: 6px 12px;">Select All</button>
+                    <button class="button" onclick="toggleAll(false)" style="background-color: #95a5a6; font-size: 12px; padding: 6px 12px;">Select None</button>
+                </div>
+            </div>
+            
+            <div class="spec-list" id="spec-container">
+                <em>Please set and save a valid Master Library Path above to load specs.</em>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button class="button" onclick="compileSpecs()">1. Compile Specs for Revit</button>
+            <button class="button" onclick="openPreview()" style="background-color: #2ecc71; color: white;">2. Preview Formatting</button>
+        </div>
+
+        <div id="status-msg"></div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8000";
+
+        window.onload = async () => {
+            try {
+                let res = await fetch(`${API_BASE}/config`);
+                let data = await res.json();
+                document.getElementById('master-path').value = data.master_library || "";
+                document.getElementById('output-path').value = data.project_output || "";
+                if (data.master_library) loadSpecs();
+            } catch (e) {
+                document.getElementById('status-msg').innerText = "Connecting to backend... ensure the Python script is running.";
+                document.getElementById('status-msg').style.color = "#e67e22";
+            }
+        };
+
+        async function saveConfig() {
+            let master = document.getElementById('master-path').value;
+            let output = document.getElementById('output-path').value;
+            await fetch(`${API_BASE}/config`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ master_library: master, project_output: output })
+            });
+            alert("Directories saved successfully!");
+            loadSpecs();
+        }
+        
+        function toggleAll(state) {
+            document.querySelectorAll('.spec-item input[type="checkbox"]').forEach(cb => cb.checked = state);
+        }
+
+        async function loadSpecs() {
+            let container = document.getElementById('spec-container');
+            try {
+                let res = await fetch(`${API_BASE}/available-specs`);
+                let data = await res.json();
+                
+                if (data.error) {
+                    container.innerHTML = `<em style="color:red;">${data.error}</em>`;
+                    return;
+                }
+                
+                container.innerHTML = "";
+                data.files.forEach(file => {
+                    let div = document.createElement('div');
+                    div.className = 'spec-item';
+                    div.innerHTML = `<input type="checkbox" value="${file}" id="${file}" checked><label for="${file}">${file.replace('.docx', '')}</label>`;
+                    container.appendChild(div);
+                });
+                
+                let checkboxes = document.querySelectorAll('.spec-item input[type="checkbox"]');
+                let lastChecked = null;
+                
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('click', function(e) {
+                        if (!lastChecked) {
+                            lastChecked = this;
+                            return;
+                        }
+                        if (e.shiftKey) {
+                            let start = Array.from(checkboxes).indexOf(this);
+                            let end = Array.from(checkboxes).indexOf(lastChecked);
+                            let slice = Array.from(checkboxes).slice(Math.min(start, end), Math.max(start, end) + 1);
+                            let state = this.checked;
+                            slice.forEach(box => box.checked = state);
+                        }
+                        lastChecked = this;
+                    });
+                });
+
+            } catch (e) {
+                container.innerHTML = `<em style="color:red;">Could not connect to the backend server.</em>`;
+            }
+        }
+
+        async function compileSpecs() {
+            let checkboxes = document.querySelectorAll('.spec-item input[type="checkbox"]:checked');
+            let selectedFiles = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (selectedFiles.length === 0) {
+                alert("Please select at least one spec section.");
+                return;
+            }
+
+            let outputFolder = document.getElementById('output-path').value;
+            let statusMsg = document.getElementById('status-msg');
+            statusMsg.style.color = "#333";
+            statusMsg.innerText = "Compiling and formatting... Please wait.";
+
+            try {
+                let res = await fetch(`${API_BASE}/compile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ project_folder: outputFolder, selected_files: selectedFiles })
+                });
+                
+                if (res.ok) {
+                    statusMsg.style.color = "#27ae60";
+                    statusMsg.innerText = "Success! Specs compiled and JSON file created in the project folder.";
+                } else {
+                    let err = await res.json();
+                    statusMsg.style.color = "red";
+                    statusMsg.innerText = "Error: " + err.detail;
+                }
+            } catch (e) {
+                statusMsg.style.color = "red";
+                statusMsg.innerText = "Failed to connect to the server.";
+            }
+        }
+
+        async function browseDirectory(inputId) {
+            try {
+                let res = await fetch(`${API_BASE}/browse`);
+                let data = await res.json();
+                
+                if (data.path) {
+                    document.getElementById(inputId).value = data.path.replace(/\//g, '\\');
+                }
+            } catch (e) {
+                alert("Make sure the Python backend is running. Cannot open folder browser.");
+            }
+        }
+
+        async function openPreview() {
+            try {
+                let res = await fetch(`${API_BASE}/latest`);
+                if (!res.ok) {
+                    alert("No active compilation found. Please click 'Compile Specs' first.");
+                    return;
+                }
+                let data = await res.json();
+
+                let previewWindow = window.open('', '_blank');
+                
+                let htmlContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Specification Layout Preview</title>
+                        <style>
+                            body { font-family: 'Arial Narrow', Arial, sans-serif; background-color: #525659; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+                            
+                            /* Expanded, flexible toolbar */
+                            .toolbar { width: 100%; max-width: 1400px; padding: 15px 20px; background: #2c3e50; color: white; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: flex-start; margin-bottom: 10px; border-radius: 4px; box-sizing: border-box; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+                            .toolbar label { font-size: 13px; font-weight: bold; font-family: 'Segoe UI', sans-serif; margin-right: 5px; }
+                            .toolbar input[type="number"] { width: 55px; padding: 5px; border-radius: 3px; border: 1px solid #ccc; text-align: center; }
+                            .toolbar select { padding: 5px; border-radius: 3px; border: 1px solid #ccc; }
+                            .control-group { display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 4px; }
+                            .print-btn { background-color: #2ecc71; color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-left: auto; transition: 0.2s; }
+                            .print-btn:hover { background-color: #27ae60; }
+                            
+                            .preview-banner { background: #f39c12; color: #fff; padding: 10px; text-align: center; width: 100%; max-width: 1400px; box-sizing: border-box; font-weight: bold; font-family: 'Segoe UI', sans-serif; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+                            
+                            .sheet-wrapper { overflow: auto; max-width: 100vw; padding-bottom: 20px; display: flex; justify-content: center; }
+                            #spec-sheet { background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.3); box-sizing: border-box; overflow: hidden; }
+                            .column-layout { column-count: 5; text-align: left; height: 100%; column-fill: auto; }
+                            
+                            .item { break-inside: avoid; }
+                            
+                            .fmt-title { font-weight: bold; text-decoration: underline; text-transform: uppercase; margin-top: 2.5em; margin-bottom: 1.5em; break-after: avoid; }
+                            .fmt-title.first { margin-top: 0; } 
+                            .fmt-toc-div { text-transform: uppercase; margin-top: 1.5em; margin-bottom: 0.5em; break-after: avoid; }
+                            .fmt-toc-item { display: flex; gap: 15px; margin-bottom: 2px; break-inside: avoid; }
+                            .csi-col { min-width: 45px; } 
+                            
+                            .fmt-h1 { font-weight: normal; margin-top: 1.5em; text-transform: uppercase; break-after: avoid; }
+                            .fmt-h2 { font-weight: normal; margin-top: 1em; break-after: avoid; }
+                            .fmt-l1 { margin-left: 15px; margin-top: 0.5em; }
+                            .fmt-l2 { margin-left: 30px; margin-top: 0.3em; }
+                            .fmt-l3 { margin-left: 45px; margin-top: 0.3em; }
+                            .fmt-l4 { margin-left: 60px; margin-top: 0.3em; }
+                            .fmt-l5 { margin-left: 75px; margin-top: 0.3em; }
+                            .fmt-body { margin-top: 0.3em; }
+                            
+                            @media print {
+                                body, html { display: block; overflow: visible; background: white; margin: 0; padding: 0; }
+                                .toolbar, .preview-banner { display: none !important; }
+                                .sheet-wrapper { overflow: visible !important; max-width: none !important; width: 100% !important; display: block; }
+                                #spec-sheet { overflow: visible !important; box-shadow: none; padding: 0 !important; width: 100% !important; height: auto !important; border: none; }
+                                .column-layout { height: auto !important; column-fill: auto; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="toolbar">
+                            <span style="font-size: 16px; font-weight: bold; font-family: 'Segoe UI', sans-serif;">Layout Controls:</span>
+                            
+                            <div class="control-group">
+                                <label>Width (in):</label>
+                                <input type="number" id="pageW" value="36" onchange="updateLayout()">
+                            </div>
+                            <div class="control-group">
+                                <label>Height (in):</label>
+                                <input type="number" id="pageH" value="27.875" onchange="updateLayout()">
+                            </div>
+                            <div class="control-group">
+                                <label>Margin (in):</label>
+                                <input type="number" id="pageM" value="0.5" step="0.1" onchange="updateLayout()">
+                            </div>
+                            <div class="control-group">
+                                <label>Col Gap (in):</label>
+                                <input type="number" id="colGap" value="0.5" step="0.1" onchange="updateLayout()">
+                            </div>
+                            <div class="control-group">
+                                <label>Line Space:</label>
+                                <input type="number" id="lineH" value="1.2" step="0.1" onchange="updateLayout()">
+                            </div>
+                            <div class="control-group">
+                                <label>Size (pt):</label>
+                                <input type="number" id="fontS" value="10" onchange="updateLayout()">
+                            </div>
+                            <div class="control-group">
+                                <label>Font:</label>
+                                <select id="fontFam" onchange="updateLayout()">
+                                    <option value="'Arial Narrow', Arial, sans-serif">Arial Narrow</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                </select>
+                            </div>
+                            
+                            <button class="print-btn" onclick="window.print()">Export to PDF</button>
+                        </div>
+                        
+                        <div class="preview-banner">
+                            Note: Only the first page is shown in this browser preview. Click 'Export to PDF' to generate and view all pages.
+                        </div>
+
+                        <div class="sheet-wrapper">
+                            <div id="spec-sheet">
+                                <div class="column-layout">
+                `;
+
+                const styleMap = {
+                    "Title": "fmt-title",
+                    "TOC Division": "fmt-toc-div",
+                    "Heading 1": "fmt-h1",
+                    "Heading 2": "fmt-h2",
+                    "List 1": "fmt-l1",
+                    "List 2": "fmt-l2",
+                    "List 3": "fmt-l3",
+                    "List 4": "fmt-l4",
+                    "List 5": "fmt-l5",
+                    "Body": "fmt-body"
+                };
+
+                let isFirstTitle = true;
+
+                data.forEach(item => {
+                    if (item.level === "TOC Item") {
+                        htmlContent += `<div class="item fmt-toc-item"><span class="csi-col">${item.csi}</span><span>${item.title}</span></div>`;
+                        return;
+                    }
+
+                    let className = styleMap[item.level] || "fmt-body";
+                    
+                    if (item.level === "Title") {
+                        if (isFirstTitle) {
+                            className += " first";
+                            isFirstTitle = false;
+                        }
+                    }
+                    
+                    // Render the HTML-safe version with red highlights if it exists, otherwise fallback to standard text
+                    let displayContent = item.html ? item.html : item.text;
+                    htmlContent += `<div class="item ${className}">${displayContent}</div>`;
+                });
+
+                htmlContent += `
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            function updateLayout() {
+                                let w = document.getElementById('pageW').value;
+                                let h = document.getElementById('pageH').value;
+                                let f = document.getElementById('fontS').value;
+                                let m = document.getElementById('pageM').value;
+                                let g = document.getElementById('colGap').value;
+                                let lh = document.getElementById('lineH').value;
+                                let fontFam = document.getElementById('fontFam').value;
+
+                                let sheet = document.getElementById('spec-sheet');
+                                sheet.style.width = w + 'in';
+                                sheet.style.height = h + 'in';
+                                sheet.style.fontSize = f + 'pt';
+                                sheet.style.padding = m + 'in';
+                                sheet.style.fontFamily = fontFam;
+                                
+                                let colLayout = document.querySelector('.column-layout');
+                                colLayout.style.columnGap = g + 'in';
+                                colLayout.style.lineHeight = lh;
+
+                                let printStyle = document.getElementById('print-style-override');
+                                if (!printStyle) {
+                                    printStyle = document.createElement('style');
+                                    printStyle.id = 'print-style-override';
+                                    document.head.appendChild(printStyle);
+                                }
+                                printStyle.innerHTML = "@page { size: " + w + "in " + h + "in; margin: " + m + "in; }";
+                            }
+                            updateLayout();
+                        <\/script>
+                    </body>
+                    </html>
+                `;
+                
+                previewWindow.document.write(htmlContent);
+                previewWindow.document.close();
+
+            } catch (e) {
+                alert("Failed to connect to the backend server.");
+            }
+        }
+    </script>
+</body>
+</html>
