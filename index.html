@@ -20,10 +20,13 @@
     </style>
 </head>
 <body>
-    <div class="container">
+
+
+	<div class="container">
         <h1>Spec Sections Manager</h1>
-        
+
         <div class="section" style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;">
+
             <h3>Directory Settings</h3>
             
             <label>Master Library Path (contains .docx files):</label>
@@ -60,6 +63,15 @@
         <div style="display: flex; gap: 10px;">
             <button class="button" onclick="compileSpecs()">1. Compile Specs for Revit</button>
             <button class="button" onclick="openPreview()" style="background-color: #2ecc71; color: white;">2. Preview Formatting</button>
+	    <button class="button" onclick="shutdown()" style="background-color: #e74c3c;">3. Close Tool & Shutdown</button>
+
+<script>
+    async function shutdown() {
+        await fetch(`${API_BASE}/shutdown`, { method: 'POST' });
+        window.close();
+    }
+</script>    
+
         </div>
 
         <div id="status-msg"></div>
