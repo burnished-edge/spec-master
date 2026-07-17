@@ -5,14 +5,12 @@ This guide provides technical instructions for configuring source documents, adj
 > **PREREQUISITE:** You must have Python installed for this tool to work. Python is available for install from Software Center.
 
 ## Table of Contents
-* [Document Setup and Formatting](#document-setup-and-formatting)
+  * [Document Setup and Formatting](#document-setup-and-formatting)
   * [End-User Workflow](#end-user-workflow)
-  * [Math Breakdown](#math-breakdown)
+  * [Adjusting Text Formatting in Code](#adjusting-text-formatting-in-code)
   * [PDF Export](#pdf-export)
-  * [JSON Import and Export](#json-import-and-export)
-  * [Copy Share Link](#copy-share-link)
-* [Usage](#usage)
-* [Jurisdictional Notice](#jurisdictional-notice)
+  * [Tips and Tricks](#tips-and-tricks)
+  * [Layout Estimations](#layout-estimations)
 
 ---
 
@@ -27,6 +25,8 @@ To utilize the database-driven spec system, individual specification files must 
 
 ![Placeholder: Screenshot of Word doc file showing CSI formatting and red critical notes]
 
+---
+
 ### End-User Workflow
 
 1. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (or `.pyw` file) located on your desktop or in the shared project folder. You do not need to manually type in an IP address. The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to `http://localhost:8000`).
@@ -34,6 +34,8 @@ To utilize the database-driven spec system, individual specification files must 
 3. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
 4. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
 5. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
+
+---
 
 ### Adjusting Text Formatting in Code
 
@@ -46,7 +48,9 @@ Visual formatting preferences are controlled via the tool's underlying code. To 
 
 ![Placeholder: Screenshot of CSS Code Snippet Highlighting Formatting Classes]
 
-### PDF Export Rendering Discrepancies
+---
+
+### PDF Export
 
 > **Disclaimer:** The visual preview rendered in the HTML/CSS web dashboard may not perfectly match the final output of the exported PDF.
 
@@ -54,13 +58,17 @@ HTML web browsers and PDF generators utilize entirely different rendering engine
 
 ![Placeholder: Screenshot of side-by-side comparison showing HTML preview vs. PDF export]
 
-### Navigation Tips and Tricks
+---
+
+### Tips and Tricks
 
 Observe the following operational guidelines to maximize the efficiency of the modular system:
 
 * **Project Toggling:** Use the web dashboard checkboxes to easily add or remove ("turn on/off") individual specification sections for your specific project.
 * **Automated Table of Contents:** The Table of Contents automatically generates and updates dynamically to reflect the active sections you have toggled on.
 * **Network Storage:** Store the database of individual spec section files on a shared network project folder to ensure the entire team is pulling from the most current versions.
+
+---
 
 ### Layout Estimations
 If you need to calculate the exact physical boundaries the layout will take up, use the following formulas:
