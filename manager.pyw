@@ -244,8 +244,32 @@ def get_latest():
 if __name__ == "__main__":
     import sys
     import os
+    import webbrowser
+    import threading
+    import time
     
+    # Redirect standard output and error to the void so pythonw doesn't crash
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w')
     
+    # Locate the index.html file in the same directory as this script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    html_path = os.path.join(current_dir, "index.html")
+    
+    # Function to open the browser after a tiny delay (giving Uvicorn time to boot)
+    def open_browser():
+        time.sleep(0.5) # Wait 1.5 seconds for the API to spin up
+        if os.path.exists(html_path):
+            # Convert Windows path to a proper file:// URI format
+            file_url = f"file:///{html_path.replace(chr(92), '/')}"
+            webbrowser.open(file_url)
+
+    # Start the browser-opening thread in the background
+    threading.Thread(target=open_browser, daemon=True).start()
+    
+    # Run the server silently
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
+@app.post("/shutdown")
+def shutdown_server():
+    os._exit(0) # Immediately kills the Python process
