@@ -13,6 +13,14 @@ To utilize the database-driven spec system, individual specification files must 
 
 ![Placeholder: Screenshot of Word doc file showing CSI formatting and red critical notes]
 
+## End-User Workflow
+
+1. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (or `.pyw` file) located on your desktop or in the shared project folder. You do not need to manually type in an IP address. The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to `http://localhost:8000`).
+2. **Selecting Spec Sections:** Once the web page loads, you will see a clean interface displaying the available spec sections. Simply check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections.
+3. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
+4. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
+5. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
+
 ## Adjusting Text Formatting in Code
 
 Visual formatting preferences are controlled via the tool's underlying code. To adjust text formatting, you must edit the code directly.
@@ -47,10 +55,4 @@ If you need to calculate the exact physical boundaries the layout will take up, 
 
 ![Placeholder: Screenshot of Web Dashboard UI showing Section Toggles, Dynamic TOC, and Layout Previews]
 
-## End-User Workflow
 
-1. **Launching the Dashboard:** To start the tool, simply double-click the designated Windows shortcut (or `.pyw` file) located on your desktop or in the shared project folder. You do not need to manually type in an IP address. The script will silently spin up a local Python server in the background and automatically open the dashboard in your default web browser (typically to `http://localhost:8000`).
-2. **Selecting Spec Sections:** Once the web page loads, you will see a clean interface displaying the available spec sections. Simply check or uncheck the boxes to turn specific sections "on" or "off" for your current project. As you toggle these sections, the Table of Contents will automatically generate and update to match your selections.
-3. **Compiling the Data:** When you are satisfied with your selected sections, initiate the compilation (e.g., by clicking "Compile"). The backend engine will grab the text from your selected files, build the Table of Contents, and stitch everything together into a single, continuous package (like a JSON or text file) that is ready for Revit.
-4. **Closing the Tool:** When you are finished managing the specs, just close the web browser tab. The local Python server running in the background will automatically detect this and shut itself down.
-5. **Placing/Updating in Revit:** Finally, switch over to your Revit project and click the "Update Specs" button on your pyRevit ribbon. The script will locate any existing spec text notes tied to that package, delete them entirely, and automatically regenerate fresh, fully formatted text columns on your sheet using the newly compiled data.
