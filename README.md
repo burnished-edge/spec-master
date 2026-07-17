@@ -49,7 +49,7 @@ To utilize the database-driven spec system, individual specification files must 
 
 6. **Previewing the Layout:** A green 'success' message should appear at the bottom of the window. Click "2. Preview Formatting" to open a new tab with a simulation of what the sheet will look like. `Note that this is not representative of the exact output. Due to the inherent differences between CSS/HTML and PDF, this preview will only ever be an approximation -- See PDF Export section at the bottom`
 
-7.**Adjusting Layout:** In the Preview tab, you'll be able to adjust layout controls including:
+7. **Adjusting Layout:** In the Preview tab, you'll be able to adjust layout controls including:
 
  * PDF sheet width and height
  * Sheet Margins
