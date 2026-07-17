@@ -15,9 +15,9 @@ This guide provides technical instructions for configuring source documents, adj
 
 ### Document Setup and Formatting
 
-To utilize the database-driven spec system, individual specification files must be configured correctly before compiling the layout.
+Before using the tool, ensure your specifications files are configured correctly:
 
-* **File Modularity:** Each 3-part specification section must be saved as an individual Word document.
+* **Individual Spec Sections:** Each 3-part specification section must be saved as an individual Word document.
 * **CSI Formatting:** All text within these Word documents must adhere strictly to CSI Masterspec formatting conventions. The tool assumes your text is formatted per Masterspec list hierarchy.
 * **Critical Notes (Red Text):** Any critical notes still requiring user review or modification at the time of export should be formatted in red text within the source Word document. 
 * **Red Text Flagging:** The HTML tool preserves this red text in its PDF export.
