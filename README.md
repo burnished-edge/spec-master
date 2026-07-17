@@ -2,6 +2,8 @@
 
 This guide provides technical instructions for configuring source documents, adjusting code-level text formatting, navigating the HTML Spec Section Manager web dashboard, and executing the end-user workflow.
 
+> **PREREQUISITE:** You must have Python installed for this tool to work. Python is available for install from Software Center.
+
 ## Document Setup and Formatting
 
 To utilize the database-driven spec system, individual specification files must be configured correctly before compiling the layout.
